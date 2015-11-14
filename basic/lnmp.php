@@ -12,5 +12,11 @@
 
     进入mysql 服务器
   * mysql -hlocalhost -uroot -p
-  
+
+    版本升级
+    http://www.php.net/downloads.php 查看版本
+  * 进入 lnmp1.1-full 目录下
+  * ./upgrade_php.sh 输入查到的版本号 
+  * 5.6.15
+  * 5.5.30
 */
