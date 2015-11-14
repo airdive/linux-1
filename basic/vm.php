@@ -42,23 +42,49 @@
   *
   * 开启此虚拟机 (不再显示此提示 进入全屏模式)
   * install or upgrade on existing system 安装或升级现在的系统
-  * 选择 skip (tab 键 方向键 -> 都可以) 下一步
+  *     install system with basic video driver 安装过程采用基本的显卡驱动
+  *     rescue installed system 进入系统修复模式
+  *     boot from local drive 退出安装从硬盘启动
+  *     memory test 存储介质检测
+  * 选择 skip (是否检测你的盘里内容 tab 键 方向键 -> 都可以) 下一步
   * 中文简体
   * 基本存储设备
   * 主机名
   * 时区
   * 密码 (学习时使用最简单的密码 无论如何都使用)
+  *     密码原则
+  *     复杂性
+  *         八位字符以上 大小写字母 数字 符号
+  *         不能是英文单词
+  *         不能是和用户相关的内容
+  *     易记忆性
+  *     时效性
   * 创建自定义布局
   * 选择创建 ---> 标准分区 ---> /boot(挂载点) 200M
   * 选择创建 ---> 标准分区 ---> swap(文件系统类型) 200M
   * 选择创建 ---> 标准分区 ---> / 使用全部可用空间
   * 在 /dev/sda 中安装引导装载程序
   * 软件包程序选择 basic server
+  *     Desktop 桌面
+  *     Minimal Desktop 最小化桌面
+  *     Minimal 最小化
+  *     Basic Server 基本服务器
+  *     Database Server 数据库服务器
+  *     Web Server 网页服务器
+  *     Virtual Host 虚拟主机
+  *     software development workstation 软件开发工作站
   * 安装引导程序
   *
   * login: root # 用户名
   * password: 
   * [root@localhost]# 
+  *
+  * [root@localhost]# ls
+  * install.log install.log.syslog anaconda-ks.cfg
+  * /root/install.log 存储了安装在系统中的软件包及其版本信息
+  * /root/install.log.syslog 存储了安装过程中留下的事件记录
+  * /root/anaconda-ks.log 以Kickstart 配置文件的格式记录安装过程中设置的选项信息
+  *
   * ls /etc/sysconfig/network-scripts/ifcfg-eth0
   * vim /etc/sysconfig/network-scripts/ifcfg-eth0
   * 修改 ONBOOT = 'yes' (按i将no 改为 yes vim 中强制退出 q! Tab 键补全)
