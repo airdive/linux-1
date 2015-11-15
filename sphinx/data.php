@@ -38,4 +38,15 @@ insert into post (weight,title,content) values
 	(0,'儿童动画片--童话合集23部--管长龙',''),
 	(0,'管夫人,上海人。第十四届中央政治局委员',''),
 	(0,'管仲与齐桓公原文|译文_文言文翻译_古诗文网','');
+
+	mysql # 提示 -bash: mysql:command not found
+  * 使用 ln -s
+  * ln -s /usr/local/mysql/bin/mysql /usr/bin
+  * msyql -uroo -p
+  *
+  * show database;
+  * use test
+  * show tables;
+  * select * from post;
+  *
 */
