@@ -48,5 +48,7 @@ insert into post (weight,title,content) values
   * use test
   * show tables;
   * select * from post;
-  *
+  * 
+  * \s 查看字符集
+  
 */

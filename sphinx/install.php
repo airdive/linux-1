@@ -36,4 +36,10 @@
     * :wq
     * service sshd restart 重启服务
 
+    [root@ csft-3.2.14] ls /usr/local/coreseek/
+    * cd /usr/local/coreseek/
+    * cd etc/
+    * ls
+    * cp sphinx.conf.dist csft.conf
+    * vim csft.conf
 */
