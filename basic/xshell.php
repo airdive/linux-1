@@ -25,7 +25,10 @@
 
      修改密码
   * vim /etc/ssh/sshd_config
-  *
+  * /UseDNS 
+  * UseDNS yes ---> UseDNS no
+  * /GSSAPIAuth
+  * GSSAPIAuthentication no
 
   *  df 查看当前文件
 
