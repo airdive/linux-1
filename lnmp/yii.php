@@ -1,6 +1,41 @@
 <?php
 
 /**
+    阿里云服务器 安装 yii2
+    yum info php (要求 php 版本 5.5)
+    更新 php
+    cd
+    ls
+    cd ./lnmp
+    cd ./lnmp1.2-full
+    ./upgrade.sh php
+    http://www.php.net/downloads.php #找要更新的版本号
+    输入要更新的版本号
+
+    token 过期
+    创建一个新的token
+    composer config --global github-oauth.github.com token值
+    composer config --global github-oauth.github.com dedeef5aafd16f05d2ca1901a8a92b8fa584b93d
+
+    删除 composer
+    rm -rf ./composer
+    rm -rf /usr/local/bin/composer
+
+    cd
+    ls
+    mkdir composer
+    ls
+    cd ./composer
+    安装目录 /root/composer/composer.phar
+    mv ./composer.phar /usr/local/bin/composer
+
+    composer create-project yiisoft/yii2-app-advanced /home/wwwroot/default/yii2
+
+    如果遇到 your requirements could not be resolved to an installable set of packages
+    删除对应的缓存
+
+
+    ===================================================================
     linux 环境安装 yii2
 
     安装composer
