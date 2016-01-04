@@ -182,11 +182,110 @@
 
     find [搜索范围] [搜索条件]
     #搜索文件
-    find / -name install.log
+    find / -name install.log #阿里云服务器上是搜索不到文件的
+    find / -name lnmp-install.log
+    /root/lnmp-install.log
     #避免大范围搜索 会非常耗费系统资源
     #find是在系统当中搜索符合条件的文件名 如果需要匹配 使用通配符匹配 通配符是完全匹配
 
     * 匹配任意内容
     ? 匹配任意一个字符
     [] 匹配任意一个中括号内的字符
+
+    find /root -iname install.log #不区分大小写
+    find /root -user root #按照所有者搜索
+    find /root -nouser #查找没有所有者的文件
+    find /var/log/ -mtime +10 #查找10天前修改的文件
+    -10 10 天内修改文件
+    10  10天当天修改的文件
+    +10 10天前修改的文件
+
+    atime 文件访问时间
+    ctime 改变文件属性
+    mtime 修改文件内容
+
+    find . -size 25k #查找文件大小是 25KB 的文件
+    -25K 小于 25KB 的文件
+    25K  等于 25KB 的文件
+    +25K 大于 25KB 的文件
+    find . -inum 262422 #查找 i 节点是 262422 的文件
+
+    find /etc -size +20k -a -size -50k #查找/etc/目录下 大于 20KB 并且小于 50KB 的文件
+    -a and 逻辑与 两个条件都满足
+    -o or  逻辑或 两个条件满足一个即可
+    find /etc -size +20k -a -size -50k -exec ls -lh {} \; #查找 /etc/ 目录下 大于 20KB 并且小于 50KB 的文件 并显示详细信息
+    #-exec/-ok 命令 {} \; 对搜索结果执行操作
+
+    搜索字符串命令 grep
+    grep [选项] 字符串 文件名 #在文件当中匹配符合条件的字符串
+    -i 忽略大小写
+    -v 排除指定字符串
+
+    find 命令与 grep 命令的区别
+    find 命令 在系统当中搜索符合条件的文件名 如果需要匹配 使用通配符匹配 通配符是完全匹配
+    grep 命令 在文件当中搜索符合条件的字符串 如果需要匹配 使用正则表达式进行匹配 正则表达式时包含匹配
+
+    帮助命令 man
+    man 命令 #获取指定命令的帮助
+    man ls   #查看 ls 的帮助
+
+    查看命令拥有那个级别的帮助
+    man -f 命令 相当于 whatis 命令
+    man -5 passwd
+    man -4 null
+    man -8 ifconfig
+    man 的级别
+    1 查看命令的帮助
+    2 查看可被内核调用的函数的帮助
+    3 查看函数和函数库的帮助
+    4 查看特殊文件的帮助 (主要是 /dev 目录下的文件)
+    5 查看配置文件的帮助
+    6 查看游戏的帮助
+    7 查看其它杂项的帮助
+    8 查看系统管理员可用命令的帮助
+    9 查看和内核相关文件的帮助
+
+    shell 内部命令帮助
+    help shell 内部命令 #获取 shell 内部命令的帮助
+
+    whereis cd #确定是否是 shell 内部命令
+    help cd #获取内部命令帮助
+
+    详细命令帮助 info
+    info 命令 #进入子帮助页面 (带有 * 号标记)
+    u 进入上层页面
+    n 进入下一个帮助小节
+    p 进入上一个帮助小节
+    q 退出
+
+    压缩命令
+    常用压缩格式 .zip .gz .bz2
+    常用压缩格式 .tar.gz .tar.bz2
+
+    .zip 格式压缩
+    zip 压缩文件名 源文件 #压缩文件
+    zip -r 压缩文件名 源目录 #压缩目录
+
+    .gz 格式压缩
+    gzip 源文件 #压缩为 .gz 格式的压缩文件 源文件会消失
+    gzip -c 源文件 > 压缩文件 #压缩为 .gz 格式 源文件保留
+    gzip -c cangls > cangls.gz
+    gzip -r 目录 #压缩目录下所有的子文件 但是不能压缩目录
+
+    bzip2 源文件 #压缩为 .bz2 格式 不保留源文件
+    bzip2 -k 源文件 #压缩之后保留源文件
+    注意 bzip2 命令不能压缩目录
+    bzip2 -d 压缩文件 #解压缩 -k 保留压缩文件
+    bunzip2 压缩文件 #解压缩 -k 保留压缩文件
+
+    打包命令 tar
+    tar -cvf 打包文件名 源文件
+    -c 打包
+    -v 显示过程
+    -f 指定打包后的文件名
+    tar -cvf longzls.tar longzls
+
+    tar -xvf 打包文件名
+    -x 解打包
+    tar -xvf longzls.tar
 */
