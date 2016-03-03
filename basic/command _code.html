@@ -45,16 +45,6 @@
 		[root@apeng ~]# ls
 		hadoop  jee  lnmp
 
-
-    -rw-r--r--
-    - 文件类型 (- 文件 d 目录 l 软链接)
-    rw- u所有者 
-    r-- g所属组
-    r-- o其他人
-
-    r 读 4 w 写 2 x 执行 1 
-    文件类型有七种 文件 目录 软链接 块设备文件 字符设备文件 套接字文件和管道文件
-
     目录相关命令
     建立目录
     mkdir -p [目录名]
@@ -86,11 +76,9 @@
 	[root@apeng ~]# pwd
 	/root
 
-
     删除空目录 rmdir
     rmdir [目录名]
     命令英文原意 remove empty directories
-
     
 	[root@apeng ~]# mkdir test
 	[root@apeng ~]# ll
@@ -118,10 +106,9 @@
 	drwxr-xr-x 2 root root 4096 Mar  3 09:10 test
 	[root@apeng ~]# cd test/
 	[root@apeng test]# vim text.html
-	[root@apeng test]#
-	[root@apeng test]# rmdir test
-	rmdir: failed to remove `test': No such file or directory
-
+	[root@apeng test]# cd ..
+    [root@apeng ~]# rmdir test
+    rmdir: failed to remove `test': Directory not empty
 
     删除文件或目录 rm
     rm -rf [文件或目录]
@@ -129,6 +116,16 @@
     选项
          -r 删除目录
          -f 强制
+
+    [root@apeng ~]# rmdir test
+    rmdir: failed to remove `test': Directory not empty
+    [root@apeng ~]#
+    [root@apeng ~]# rm -rf test
+    [root@apeng ~]# ll
+    total 12
+    drwxr-xr-x 6 root root 4096 Feb 23 22:13 hadoop
+    drwxr-xr-x 4 root root 4096 Feb 20 16:35 jee
+    drwxr-xr-x 4 root root 4096 Feb 20 11:31 lnmp
 
     复制命令 cp
     cp [选项] [原文件或目录] [目标目录]
