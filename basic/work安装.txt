@@ -1,3 +1,11 @@
+
+
+[root@iZ94f2imuwkZ java]# uname -a #阿里云服务器
+Linux iZ94f2imuwkZ 2.6.32-431.23.3.el6.x86_64 #1 SMP Thu Jul 31 17:20:51 UTC 2014 x86_64 x86_64 x86_64 GNU/Linux
+
+[root@peng1 bin]# uname -a #本地虚拟机 linux
+Linux peng1 2.6.32-279.el6.i686 #1 SMP Fri Jun 22 10:59:55 UTC 2012 i686 i686 i386 GNU/Linux
+
 安装 hadoop 环境
 
 打开阿里云服务器 打开安装好的本地 linux 系统
@@ -5,3 +13,108 @@
 使用 winscp 下载阿里云服务器上的 jdk 包
 
 使用 winscp 上传 jdk 包到 192.168.209.129 服务器上
+
+安装 jdk gz 包
+
+[root@peng1 jdk]# cd /usr/local/
+[root@peng1 local]# mkdir java
+[root@peng1 local]# pwd
+/usr/local
+[root@peng1 local]# cd /root/jdk/
+[root@peng1 jdk]# ls
+jdk-8u73-linux-x64.gz  jdk-8u73-linux-x64.rpm
+[root@peng1 jdk]# mv jdk-8u73-linux-x64.gz /usr/local/java/
+[root@peng1 jdk]# cd /usr/local/java/
+[root@peng1 java]# ls
+jdk-8u73-linux-x64.gz
+[root@peng1 java]# tar -zxvf jdk-8u73-linux-x64.gz
+
+[root@peng1 java]# ls
+jdk1.8.0_73  jdk-8u73-linux-x64.gz
+[root@peng1 java]# cd jdk1.8.0_73/
+
+[root@peng1 jdk1.8.0_73]# vi /etc/profile
+
+export JAVA_HOME=/usr/local/java/jdk1.8.0_73
+export JRE_HOME=/usr/local/java/jdk1.8.0_73/jre
+export PATH=$JAVA_HOME/bin:$PATH
+export CLASSPATH=./:$JAVA_HOME/lib:$JAVA_HOME/jre/lib
+
+
+
+
+wget http://apache.fayea.com/hadoop/common/hadoop-1.2.1/hadoop-1.2.1.tar.gz 下载 hadoop 安装包
+[root@peng1 hadoop]# wget http://apache.fayea.com/hadoop/common/hadoop-1.2.1/hadoop-1.2.1.tar.gz
+--2016-03-07 20:49:17--  http://apache.fayea.com/hadoop/common/hadoop-1.2.1/hadoop-1.2.1.tar.gz
+正在解析主机 apache.fayea.com... 119.6.242.164, 119.6.242.165
+正在连接 apache.fayea.com|119.6.242.164|:80... 已连接。
+已发出 HTTP 请求，正在等待回应... 200 OK
+长度：63851630 (61M) [application/x-gzip]
+正在保存至: “hadoop-1.2.1.tar.gz”
+
+
+[root@peng1 hadoop]# tar -zxvf hadoop-1.2.1.tar.gz
+[root@peng1 hadoop]# ls
+hadoop-1.2.1  hadoop-1.2.1.tar.gz
+[root@peng1 hadoop]# cd hadoop-1.2.1
+[root@peng1 hadoop-1.2.1]# ls
+bin          hadoop-ant-1.2.1.jar          ivy          sbin
+build.xml    hadoop-client-1.2.1.jar       ivy.xml      share
+c++          hadoop-core-1.2.1.jar         lib          src
+CHANGES.txt  hadoop-examples-1.2.1.jar     libexec      webapps
+conf         hadoop-minicluster-1.2.1.jar  LICENSE.txt
+contrib      hadoop-test-1.2.1.jar         NOTICE.txt
+docs         hadoop-tools-1.2.1.jar        README.txt
+
+[root@peng1 hadoop-1.2.1]# ln -sf /root/hadoop/hadoop-1.2.1 /home/hadoop1.2
+[root@peng1 hadoop-1.2.1]# cd /home/
+[root@peng1 home]# ls
+hadoop1.2
+[root@peng1 home]# ll
+总用量 0
+lrwxrwxrwx. 1 root root 25 3月   7 21:10 hadoop1.2 -> /root/hadoop/hadoop-1.2.1
+[root@peng1 home]# cd hadoop1.2/
+[root@peng1 hadoop1.2]# ls
+bin          hadoop-ant-1.2.1.jar          ivy          sbin
+build.xml    hadoop-client-1.2.1.jar       ivy.xml      share
+c++          hadoop-core-1.2.1.jar         lib          src
+CHANGES.txt  hadoop-examples-1.2.1.jar     libexec      webapps
+conf         hadoop-minicluster-1.2.1.jar  LICENSE.txt
+contrib      hadoop-test-1.2.1.jar         NOTICE.txt
+docs         hadoop-tools-1.2.1.jar        README.txt
+[root@peng1 hadoop1.2]# cd conf
+
+
+[root@peng1 conf]# vim core-site.xml
+<configuration>
+    <property>
+        <name>fs.default.name</name>
+        <value>hdfs://peng1:9000</value>
+    </property>
+    <property>
+        <name>hadoop.tmp.dir</name>
+        <value>/opt/hadoop-1.2</value>
+    </property>
+</configuration>
+
+
+
+[root@peng1 conf]# vim hdfs-site.xml
+<configuration>
+    <property>
+         <name>dfs.replication</name>
+         <value>1</value>
+    </property>
+</configuration>
+
+
+[root@peng1 conf]# cd ..
+[root@peng1 hadoop1.2]# ./bin/hadoop nodenode -format
+Error: JAVA_HOME is not set.
+[root@peng1 hadoop1.2]#
+
+
+font.properties  java.conf  jpackage-release  security
+
+
+
