@@ -94,3 +94,13 @@ hadoop: not a regular file #是文件夹时要加 -r
 登录到 peng2 查看目录
 [root@peng2 ~]# ls
 anaconda-ks.cfg  hadoop  id_dsa.pub  install.log  install.log.syslog
+
+
+配置本地无密码
+
+[root@peng1 ~]# cd ./.ssh/
+[root@peng1 .ssh]# ls
+id_dsa  id_dsa.pub  known_hosts
+[root@peng1 .ssh]# cat id_dsa >>  ~/.ssh/authorized_keys
+[root@peng1 .ssh]# ssh peng1
+
