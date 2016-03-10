@@ -6,7 +6,7 @@ public class WcMapper extends 	Mapper<LongWritable, Text, Text, IntWritable> {
 	public void map(LongWritable key, Text value, Context context)
 			throws IOException, InterruptedException {
 		String line = value.toString();
-		StringTokenizer token = new StringTokenizer(line);
+		StringTokenizer st = new StringTokenizer(line);
 		while (token.hasMoreTokens()) {
 			String world = st.nextToken();
 			context.write(new Text(world), new IntWritable(1)); // map的输出
