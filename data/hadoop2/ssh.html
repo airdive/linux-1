@@ -1,0 +1,37 @@
+配置无密码登录
+
+peng1 --- 192.168.209.129 --- peng20160307 
+peng2 --- 192.168.209.130 --- peng20307
+peng3 --- 192.168.209.131 --- peng30307
+peng4 --- 192.168.209.132 --- peng40307
+
+[root@peng1 ~]# vi /etc/hosts
+192.168.209.129 peng1
+192.168.209.130 peng2
+192.168.209.131 peng3
+192.168.209.132 peng4
+
+[root@peng1 ~]# ssh-keygen -t dsa -P '' -f ~/.ssh/id_dsa
+[root@peng1 ~]# cd /root/.ssh
+[root@peng1 .ssh]# scp id_dsa.pub root@peng4:~
+
+登录 peng4
+[root@peng4 ~]# ssh-keygen -t dsa -P '' -f ~/.ssh/id_dsa
+[root@peng4 ~]# cat id_dsa.pub >> ~/.ssh/authorized_keys
+[root@peng4 ~]# more ~/.ssh/authorized_keys
+
+
+复制 JDK 环境
+[root@peng1 ~]# scp -r /usr/local/java root@peng2:/usr/local/
+[root@peng1 ~]# scp -r /usr/local/java root@peng3:/usr/local/
+[root@peng1 ~]# scp -r /etc/profile root@peng2:/etc/
+[root@peng1 ~]# scp -r /etc/profile root@peng3:/etc/
+
+登录 peng4 (检测 java 环境)
+[root@peng4 ~]# vi /etc/profile 
+[root@peng4 ~]# source /etc/profile
+[root@peng4 ~]# java -version
+java version "1.8.0_73"
+Java(TM) SE Runtime Environment (build 1.8.0_73-b02)
+Java HotSpot(TM) Client VM (build 25.73-b02, mixed mode)
+[root@peng4 ~]# jps

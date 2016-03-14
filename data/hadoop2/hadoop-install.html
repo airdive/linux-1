@@ -1,0 +1,182 @@
+       NN  DN  ZK  ZKFC  JN  RM   DM
+peng1  1       1   1         1    
+peng2  1   1   1   1     1        1
+peng3      1   1         1        1
+peng4      1             1        1
+
+NN namenode
+DN datanode
+ZK zookeeper
+ZKFC zookeeper failover controller
+JN journalnode
+RM resource manager
+DM node manager
+
+登录 peng1
+
+[root@peng1 ~]# mkdir hadoop2
+[root@peng1 ~]# cd hadoop2
+
+使用 ssh 上传 hadoop-2.5.2.tar.gz /root/hadoop2
+
+[root@peng1 hadoop2]# tar -zxvf hadoop-2.5.2.tar.gz
+[root@peng1 hadoop2]# ln -sf /root/hadoop2/hadoop-2.5.2 /home/hadoop2
+[root@peng1 hadoop2]# cd /home/hadoop2
+[root@peng1 hadoop2]# cd ./etc/hadoop
+[root@peng1 hadoop]# cd /home/hadoop2
+
+修改配置文件
+[root@peng1 hadoop]# vi hadoop-env.sh
+export JAVA_HOME=/usr/local/java/jdk1.8.0_73
+
+[root@peng1 hadoop]# vi hdfs-site.xml
+<property>
+    <name>dfs.nameservices</name>
+    <value>peng</value>
+</property>
+<property>
+    <name>dfs.ha.namenodes.peng</name>
+    <value>nn1,nn2</value>
+</property>
+<property>
+    <name>dfs.namenode.rpc-address.peng.nn1</name>
+    <value>node1:8020</value>
+</property>
+<property>
+    <name>dfs.namenode.rpc-address.peng.nn2</name>
+    <value>node2:8020</value>
+</property>
+<property>
+    <name>dfs.namenode.http-address.peng.nn1</name>
+    <value>node1:50070</value>
+</property>
+<property>
+    <name>dfs.namenode.http-address.peng.nn2</name>
+    <value>node2:50070</value>
+</property>
+<property>
+    <name>dfs.namenode.shared.edits.dir</name>
+    <value>qjournal://node2:8485;node3:8485;node4:8485/peng</value>
+</property>
+<property>
+    <name>dfs.client.failover.proxy...</name>
+    <value></value>
+</property>
+<property>
+    <name>dfs.ha.fencing.methods</name>
+    <value>sshfence</value>
+</property>
+<property>
+    <name>dfs.ha.fencing.ssh.private-key-files</name>
+    <value>/root/.ssh/id_dsa</value>
+</property>
+<property>
+    <name>dfs.journalnode.edits.dir</name>
+    <value>/opt/jn/data</value>
+</property>
+<property>
+    <name>dfs.ha.automatic-failover.enabled</name>
+    <value>true</value>
+</property>
+
+
+[root@peng1 hadoop]# vi core-site.xml
+<property>
+    <name>dfs.defaultFS</name>
+    <value>hdfs://peng</value>
+</property>
+<property>
+    <name>dfs.zookeeper.quorum</name>
+    <value>node1:2181,node2:2181,node3:2181</value>
+</property>
+<property>
+    <name>hadoop.tmp.dir</name>
+    <value>/opt/hadoop2</value>
+</property>
+
+[root@peng1 hadoop]# vi slaves
+peng2
+peng3
+peng4
+
+安装 Zookeeper 
+zookeeper.apache.org 
+--- download (http://zookeeper.apache.org/releases.html)
+--- download (http://www.apache.org/dyn/closer.cgi/zookeeper/)
+--- http://apache.fayea.com/zookeeper/
+--- zookeeper-3.4.6
+--- http://apache.fayea.com/zookeeper/zookeeper-3.4.6/zookeeper-3.4.6.tar.gz
+wget http://apache.fayea.com/zookeeper/zookeeper-3.4.6/zookeeper-3.4.6.tar.gz
+
+
+[root@peng1 hadoop]# cd
+[root@peng1 ~]# mkdir zk
+[root@peng1 ~]# cd zk
+
+使用 ssh 工具上传 zookeeper-3.4.6.tar.gz 到 /root/zk
+
+[root@peng1 zk]# tar -zxvf zookeeper-3.4.6.tar.gz
+[root@peng1 zk]# ln -sf /root/zk/zookeeper-3.4.6 /home/zk
+[root@peng1 zk]# cd /home/zk
+
+
+[root@peng1 zk]# cd conf
+[root@peng1 conf]# cp -a zoo_sample.cfg zoo.cfg
+[root@peng1 conf]# vi zoo.cfg
+server.1=peng1:2888:3888
+server.2=peng2:2888:3888
+server.3=peng3:2888:3888
+
+[root@peng1 conf]# mkdir /opt/zookeeper
+[root@peng1 conf]# cd /opt/zookeeper/
+[root@peng1 zookeeper]# vi myid
+1
+
+登录 peng2 peng3 创建 zk 目录
+[root@peng2 ~]# mkdir zk
+[root@peng3 ~]# mkdir zk
+
+[root@peng1 zookeeper]# scp -r /opt/zookeeper/ root@peng2:/opt/
+myid                                          100%    2     0.0KB/s   00:00
+[root@peng1 zookeeper]# scp -r /opt/zookeeper/ root@peng3:/opt/
+myid                                          100%    2     0.0KB/s   00:00
+[root@peng1 zookeeper]# scp -r /root/zk/zookeeper-3.4.6 root@peng2:/root/zk/
+[root@peng1 zookeeper]# scp -r /root/zk/zookeeper-3.4.6 root@peng3:/root/zk/
+
+登录 peng2
+
+[root@peng2 zk]# ln -sf /root/zk/zookeeper-3.4.6/ /home/zk
+[root@peng2 zk]# cd /home/zk/conf
+[root@peng2 conf]# vi zoo.cfg
+[root@peng2 conf]# vi /opt/zookeeper/myid
+2
+
+登录 peng3 操作同上
+
+[root@peng1 zookeeper]# vi /etc/profile
+
+export PATH=$JAVA_HOME/bin:/home/zk/bin:$PATH
+
+[root@peng1 zookeeper]# source /etc/profile
+[root@peng1 zookeeper]# scp -r /etc/profile root@peng2:/etc/
+[root@peng1 zookeeper]# scp -r /etc/profile root@peng3:/etc/
+[root@peng1 zookeeper]# service iptables stop
+
+[root@peng1 bin]# scp -r /etc/profile root@peng2:/etc/
+profile                                       100% 1986     1.9KB/s   00:00
+[root@peng1 bin]# scp -r /etc/profile root@peng3:/etc/
+profile                                       100% 1986     1.9KB/s   00:00
+[root@peng1 bin]#
+[root@peng1 bin]# service iptables stop
+iptables：清除防火墙规则：                                 [确定]
+iptables：将链设置为政策 ACCEPT：filter                    [确定]
+iptables：正在卸载模块：                                   [确定]
+
+
+登录 peng2 
+[root@peng2 conf]# source /etc/profile
+[root@peng2 conf]# service iptables stop
+
+登录 peng3 操作同上
+
+[root@peng1 bin]# zkServer.sh start
