@@ -143,7 +143,42 @@
     <name>Password</name>
     <value>123456</value>
 
+    create table t_emp
+    id int,
+    name string,
+    age int,
+    dept_name string
+        )
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ',';
 
+vi emp.txt
+    1,张三,32,销售部
+    2,李四,31,销售部
+    3,王五,33,销售部
+    4,孙六,34,销售部
+
+    load data local inpath '/root/emp.txt' into table t_emp;
+    select count(*) from t_emp; #将 SQL 转为 mapreduce 执行
+    select count(*) from t_emp where dept_name='销售部' group by dept_name;
+    show tables;
+    desc t_emp;
+    select * from t_emp;
+
+    create table t_person (
+        id int,
+        name string,
+        like array<string>,
+        tedian map<string,string>
+        )
+    ROW FORMAT DELIMITED
+    FIELDS TERMINATED BY ','
+    COLLECTION ITEMS TERMINATED BY '_'
+    MAP KEYS TERMINATED BY ':';
+
+    1,zhangsan,sports_books_tv,sex:男_color:red
+
+    hive 在运行时有一些元数据需要保存 默认保存到 DBMS
     hadoop 生态系统
     HDFS 分布式文件系统
     MapReduce 分布式计算框架 （基于磁盘 DISK IO）
