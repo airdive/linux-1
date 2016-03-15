@@ -32,7 +32,6 @@ http://hadoop.apache.org/docs/r2.5.2/hadoop-project-dist/hadoop-hdfs/HDFSHighAva
 [root@peng1 hadoop2]# ln -sf /root/hadoop2/hadoop-2.5.2 /home/hadoop2
 [root@peng1 hadoop2]# cd /home/hadoop2
 [root@peng1 hadoop2]# cd ./etc/hadoop
-[root@peng1 hadoop]# cd /home/hadoop2
 
 修改配置文件
 [root@peng1 hadoop]# vi hadoop-env.sh
@@ -148,7 +147,7 @@ export JAVA_HOME=/usr/local/java/jdk1.8.0_73
 <!-- 自定义 ResourceManager 的地址 注意这里是单点 -->
 <property> 
     <name>yarn.resourcemanager.hostname</name> 
-    <value>hadoop101</value> 
+    <value>peng1</value> 
 </property>   
 
 <property> 
