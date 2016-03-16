@@ -1,0 +1,38 @@
+Hadoop 2.5 编译安装
+
+yum -y install  svn   ncurses-devel   gcc*                                             
+yum -y install lzo-devel zlib-devel autoconf    automake    libtool    cmake   openssl–devel
+ 
+安装 maven
+http://maven.apache.org/download.cgi 下载源码安装
+[root@peng1 ~]# mkdir maven
+[root@peng1 ~]# mv apache-maven-3.3.9-bin.tar.gz maven/
+[root@peng1 maven]# tar -zxvf apache-maven-3.3.9-bin.tar.gz
+[root@peng1 bin]# ln -sf /root/maven/apache-maven-3.3.9 /home/maven
+[root@peng1 bin]# vi /etc/profile
+export MAVEN_HOME=/home/maven
+export PATH=$PATH:$JAVA_HOME/bin:$MAVEN_HOME/bin
+
+[root@peng1 bin]# source /etc/profile
+
+安装 protocol
+hadoop使用protocol buffer进行通信，需要下载和安装protobhf-2.5.0.tar.gz；由于官网已经无法下载了，
+
+可以到百度云盘下载http://pan.baidu.com/s/1pJlZubT
+[root@peng1 ~]# mkdir protobuf
+[root@peng1 ~]# mv protobuf-2.5.0.tar.gz protobuf
+[root@peng1 ~]# cd protobuf/
+[root@peng1 protobuf]# tar -zxvf protobuf-2.5.0.tar.gz
+[root@peng1 protobuf]# cd protobuf-2.5.0
+[root@peng1 protobuf-2.5.0]# ./configure
+[root@peng1 protobuf-2.5.0]# make && make install
+
+编译安装 hadoop-2.5.1.src
+
+下载  hadoop-2.5.1-src.tat.gz
+源码包下载地址  http://apache.claz.org/hadoop/common/hadoop-2.5.1/
+红色标志  hadoop-2.5.1- src.tar.gz 为源码包
+ 
+[root@peng1 hadoop2.5]# tar -zxvf hadoop-2.5.2-src.tar.gz
+[root@peng1 hadoop2.5]# cd hadoop-2.5.2-src
+[root@peng1 hadoop-2.5.2-src]# mvn clean package –Pdist,native –DskipTests –Dtar
