@@ -11,6 +11,17 @@ http://ant.apache.org/bindownload.cgi
 
 
 http://findbugs.sourceforge.net/downloads.html
+
+[root@peng2 ~]# mkdir findbugs
+[root@peng2 ~]# mv findbugs-3.0.1.tar.gz findbugs
+[root@peng2 ~]# cd findbugs/
+[root@peng2 findbugs]# ls
+findbugs-3.0.1.tar.gz
+[root@peng2 findbugs]# tar -zxvf findbugs-3.0.1.tar.gz
+[root@peng2 findbugs]# ln -sf /root/findbugs/findbugs-3.0.1 /home/findbugs
+[root@peng2 findbugs]# vi /etc/profile
+[root@peng2 findbugs]# source /etc/profile
+
  
 安装 maven (是一个软件 --- 特别是 JAVA 软件 --- 项目管理及自动构建工具)
 http://maven.apache.org/download.cgi 下载源码安装
@@ -60,4 +71,5 @@ hadoop使用protocol buffer进行通信，需要下载和安装protobhf-2.5.0.ta
  
 [root@peng1 hadoop2.5]# tar -zxvf hadoop-2.5.2-src.tar.gz
 [root@peng1 hadoop2.5]# cd hadoop-2.5.2-src
-[root@peng1 hadoop-2.5.2-src]# mvn clean package –Pdist,native –DskipTests –Dtar
+[root@peng1 hadoop-2.5.2-src]# mvn package –Pdist,native,docs –DskipTests –Dtar
+[root@peng1 hadoop-2.5.2-src]# mvn install
