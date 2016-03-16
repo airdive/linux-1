@@ -63,3 +63,11 @@ readme.txt
 [root@peng1 hadoop2]# ./bin/hdfs dfs -ls /usr/input/temper
 -rw-r--r--   1 root root        223 2016-03-15 21:02 /usr/input/temper/tem
 [root@peng1 hadoop2]# ./bin/hadoop jar /root/temper.jar temper.peng.com.RunJob
+
+
+测试 计算例子
+[root@peng1 hadoop2]# ./bin/hdfs dfs -mkdir /usr/input/wc
+[root@peng1 hadoop2]# ./bin/hdfs dfs -ls /usr/input/
+drwxr-xr-x   - root root       4096 2016-03-15 21:02 /usr/input/temper
+drwxr-xr-x   - root root       4096 2016-03-16 18:36 /usr/input/wc
+[root@peng1 hadoop2]# ./bin/hdfs dfs -put /root/test /usr/input/wc/
