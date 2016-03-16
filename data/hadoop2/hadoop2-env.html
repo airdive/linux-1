@@ -32,7 +32,6 @@ http://hadoop.apache.org/docs/r2.5.2/hadoop-project-dist/hadoop-hdfs/HDFSHighAva
 [root@peng1 hadoop2]# ln -sf /root/hadoop2/hadoop-2.5.2 /home/hadoop2
 [root@peng1 hadoop2]# cd /home/hadoop2
 [root@peng1 hadoop2]# cd ./etc/hadoop
-[root@peng1 hadoop]# cd /home/hadoop2
 
 修改配置文件
 [root@peng1 hadoop]# vi hadoop-env.sh
@@ -135,6 +134,28 @@ export JAVA_HOME=/usr/local/java/jdk1.8.0_73
 <property>
     <name>dfs.client.failover.proxy.provider.peng</name>
     <value>org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider</value>
+<<<<<<< HEAD
+</property>
+
+[root@peng1 hadoop]# vi mapred-site.xml
+<!-- 指定运行 mapreduce 的环境是 yarn 与 hadoop1 不同的地方 -->
+<property> 
+    <name>mapreduce.framework.name</name> 
+    <value>yarn</value> 
+</property>
+
+[root@peng1 hadoop]# vi yarn-site.xml
+<!-- 自定义 ResourceManager 的地址 注意这里是单点 -->
+<property> 
+    <name>yarn.resourcemanager.hostname</name> 
+    <value>peng1</value> 
+</property>   
+
+<property> 
+    <name>yarn.nodemanager.aux-services</name> 
+    <value>mapreduce_shuffle</value> 
+=======
+>>>>>>> b9202df8b88d5e145feeb9ef6d20d2f1777057c8
 </property> 
 
 [root@peng1 hadoop]# vi slaves
