@@ -127,6 +127,11 @@
     drwxr-xr-x 4 root root 4096 Feb 20 16:35 jee
     drwxr-xr-x 4 root root 4096 Feb 20 11:31 lnmp
 
+    如果修改某个文件出现假死机， 关闭窗口后 会自动为该文件生成一个 .swp 文件
+    每次再打开这文件时 会出现提示信息 删除 swp 文件后就可以直接打开此文件
+    [root@peng1 ~]# rm -rf /etc/.profile.swp
+
+
     复制命令 cp
     cp [选项] [原文件或目录] [目标目录]
     命令英文原意 copy
