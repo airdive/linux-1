@@ -306,6 +306,7 @@ export PATH=$PATH:$HADOOP_HOME/sbin
 2815 DataNode
 
 http://peng1:50070/dfshealth.jsp
+http://peng1:50070/explorer.html#/
 http://peng1:8088/cluster
 
 运行 hadoop1 中的样例
@@ -591,7 +592,8 @@ OK
 4
 Time taken: 38.581 seconds, Fetched: 1 row(s)
 
-
+# 在浏览器可以看到 t_emp 存在位置
+http://peng1:50070/explorer.html#/user/hive/warehouse/t_emp
 
 create table t_person (
 id int,
@@ -605,3 +607,7 @@ COLLECTION ITEMS TERMINATED BY '_'
 MAP KEYS TERMINATED BY ':';
 
 1,zhangsan,sports_books_tv,sex:男_color:red
+
+load data local inpath /root/hivesql/data into table t_person
+
+hiv 的其它用法 参考 hive的使用
