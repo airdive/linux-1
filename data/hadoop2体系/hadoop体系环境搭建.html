@@ -611,3 +611,152 @@ MAP KEYS TERMINATED BY ':';
 load data local inpath /root/hivesql/data into table t_person
 
 hiv 的其它用法 参考 hive的使用
+
+
+hbase 环境搭建 ( 分布式环境 )
+      HM (HMaster) RS (RegionServer)
+peng1              Y
+peng2              Y
+peng3 Y            Y
+peng4 Y            Y  
+http://abloz.com/hbase/book.html hbase 中文文档
+http://apache.fayea.com/hbase/ 下载 hbase-0.98.17-hadoop2-bin.tar.gz
+[root@peng1 ~]# mkdir hbase
+[root@peng1 ~]# mv hbase-0.98.17-hadoop2-bin.tar.gz hbase
+[root@peng1 ~]# cd hbase
+[root@peng1 hbase]# tar -zxvf hbase-0.98.17-hadoop2-bin.tar.gz
+[root@peng1 hbase]# ln -sf /root/hbase/hbase-0.98.17-hadoop2 /home/hbase
+[root@peng1 hbase]# cd /home/hbase
+[root@peng1 hbase]# cd conf
+[root@peng1 conf]# vi hbase-env.sh
+export JAVA_HOME=/usr/local/java/jdk1.8.0_73
+[root@peng1 conf]# vi hbase-site.xml
+
+<property>
+    <name>hbase.rootdir</name>
+    <value>hdfs://peng1:9000/hbase</value>
+</property>
+<properey>
+    <name>hbase.cluster.distributed</name>
+    <value>true</value>
+</property>
+
+[root@peng1 conf]# vi regionservers
+peng1
+peng2
+peng3
+peng4
+
+[root@peng1 conf]# vi hbase-env.sh
+export HBASE_MANAGES_ZK=false #默认为true true 时使用内置的 zk
+[root@peng1 conf]# vi hbase-site.xml
+
+<property>
+    <name>hbase.zookeeper.quorum</name>
+    <value>peng1,peng2,peng3</value>
+</property>
+<property>
+    <name>hbase.zookeeper.property.dataDir</name>
+    <value>/opt/zookeeper</value>
+</property>
+
+[root@peng1 conf]# cp -a /home/hadoop/etc/hadoop/hdfs-site.xml .
+
+
+复制 hbase 环境
+[root@peng2 ~]# mkdir hbase
+
+[root@peng1 conf]# scp -r /root/hbase/hbase-0.98.17-hadoop2 root@peng2:/root/hbase/
+[root@peng1 conf]# scp -r /root/hbase/hbase-0.98.17-hadoop2 root@peng3:/root/hbase/
+[root@peng1 conf]# scp -r /root/hbase/hbase-0.98.17-hadoop2 root@peng4:/root/hbase/
+
+[root@peng2 hbase]# ln -sf /root/hbase/hbase-0.98.17-hadoop2/ /home/hbase
+[root@peng2 hbase]# cd /home/hbase/conf
+[root@peng2 conf]# vi hbase-env.sh
+[root@peng2 conf]# vi hbase-site.xml
+[root@peng2 conf]# vi regionservers
+
+登录 peng3 peng4 操作同上
+
+开启 zk 服务 和 hadoop 服务
+[root@peng1 conf]# zkServer.sh start #peng1 peng2 peng3 开启
+[root@peng1 hbase]# ./bin/start-hbase.sh
+[root@peng1 hbase]# jps
+8384 HRegionServer
+7168 QuorumPeerMain
+8257 HMaster
+4837 NameNode
+5160 ResourceManager
+5019 SecondaryNameNode
+8430 Jps
+
+[root@peng2 conf]# jps
+32418 NodeManager
+1142 QuorumPeerMain
+1739 Jps
+32316 DataNode
+1502 HRegionServer
+
+
+[root@peng3 ~]# jps
+32512 QuorumPeerMain
+31010 DataNode
+454 Jps
+31112 NodeManager
+32765 HRegionServer
+
+
+[root@peng4 ~]# jps
+31157 DataNode
+602 Jps
+444 HRegionServer
+31261 NodeManager
+
+http://peng1:60010/master-status
+Master peng1
+
+
+[root@peng2 hbase]# ./bin/hbase-daemon.sh start master # 其它服务器开启 hmaster 使用
+
+[root@peng1 hbase]# kill -9 8257 # 挂一台服务器 peng1 (会自动切换为另一台 peng2)
+http://peng2:60010/master-status
+Master peng2
+
+
+[root@peng1 hbase]# ./bin/hbase shell # 进入 hbase 数据库
+hbase(main):001:0> create 't_student','cf1' # 创建表
+=> Hbase::Table - t_student
+hbase(main):002:0> list # 显示表
+TABLE
+t_student
+1 row(s) in 0.0360 seconds
+=> ["t_student"]
+
+hbase(main):003:0> desc 't_student'
+Table t_student is ENABLED
+t_student
+COLUMN FAMILIES DESCRIPTION
+{NAME => 'cf1', BLOOMFILTER => 'ROW', VERSIONS => '1', IN_MEMORY => 'false', KEEP_DELE
+TED_CELLS => 'FALSE', DATA_BLOCK_ENCODING => 'NONE', TTL => 'FOREVER', COMPRESSION =>
+'NONE', MIN_VERSIONS => '0', BLOCKCACHE => 'true', BLOCKSIZE => '65536', REPLICATION_S
+COPE => '0'}
+1 row(s) in 0.1080 seconds
+
+hbase(main):004:0> put 't_student','001','cf1:name','peng1'
+0 row(s) in 0.2150 seconds
+
+hbase(main):005:0> scan 't_student'
+ROW                    COLUMN+CELL
+ 001                   column=cf1:name, timestamp=1458444384020, value=peng1
+1 row(s) in 0.0460 seconds
+
+hbase(main):004:0> create 't_person','cf1'
+
+hbase(main):005:0> list
+hbase(main):006:0> put 't_person','001','cf1:name','peng1'
+hbase(main):007:0> flush 't_person' # 每 flush 一次会生成一个文件
+hbase(main):008:0> put 't_person','001','cf1:name','peng2'
+hbase(main):009:0> put 't_person','001','cf1:name','peng3'
+hbase(main):0010:0> flush 't_person'
+hbase(main):0011:0> major_compact 't_person' #将多个文件合并为一个文件
+hbase(main):0012:0> ./bin/hbase hfile -p -f /hbase/data/default/t_student/14ff507dcb6c8045d4d5af1492ac5394/9a83a6dc26cd4de485b6003f0e5807e6 # cf1文件路径 打印数据信息
