@@ -626,7 +626,7 @@ mysql> create database hive;
 [root@peng1 ~]# cd /home/hive/
 [root@peng1 hive]# ./bin/hive
 
-create table t_emp(
+create table t_employee(
 id int,
 name string,
 age int,
@@ -636,7 +636,7 @@ ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ',';
 
 
-hive> create table t_emp(
+hive> create table t_employee(
     > id int,
     > name string,
     > age int,
