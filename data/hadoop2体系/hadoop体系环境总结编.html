@@ -1,9 +1,22 @@
 本 hadoop体系使用 一主三从
 
+使用版本
+jdk1.8.0
+hadoop2.6.2
+zookeeper3.4.6
+hive1.1.1
+hbase0.98.17
+
+笔记本
 peng1 --- 192.168.129.128 --- peng0313
 peng2 --- 192.168.129.129 --- peng0313
 peng3 --- 192.168.129.130 --- peng0313
 peng4 --- 192.168.129.131 --- peng0313
+
+peng1 --- 192.168.129.133 --- peng0321
+peng2 --- 192.168.129.134 --- peng0321
+peng3 --- 192.168.129.135 --- peng0321
+peng4 --- 192.168.129.136 --- peng0321
 
 配置无密码登录
 [root@peng1 ~]# vi /etc/hosts
@@ -19,9 +32,6 @@ peng4 --- 192.168.129.131 --- peng0313
 [root@peng1 .ssh]# scp id_dsa.pub root@peng2:~
 [root@peng1 .ssh]# scp id_dsa.pub root@peng3:~
 [root@peng1 .ssh]# scp id_dsa.pub root@peng4:~
-[root@peng1 .ssh]# scp /etc/hosts root@peng2:/etc/
-[root@peng1 .ssh]# scp /etc/hosts root@peng3:/etc/
-[root@peng1 .ssh]# scp /etc/hosts root@peng4:/etc/
 
 登录 peng2
 [root@peng2 ~]# ssh-keygen -t dsa -P '' -f ~/.ssh/id_dsa
@@ -30,9 +40,13 @@ peng4 --- 192.168.129.131 --- peng0313
 
 登录 peng3 peng4 操作同上
 
+[root@peng1 .ssh]# scp /etc/hosts root@peng2:/etc/
+[root@peng1 .ssh]# scp /etc/hosts root@peng3:/etc/
+[root@peng1 .ssh]# scp /etc/hosts root@peng4:/etc/
+
 
 安装 JDK
-
+=============================================================
 删除系统自带的 JDK
 [root@peng4 rh]# java -version
 java version "1.6.0_24"
@@ -86,6 +100,7 @@ Complete!
 
 在 www.oracle.com 上下载 jdk-8u73-linux-i586.gz
 使用 winscp 上传 jdk 包到 peng1(192.168.129.128) 服务器上
+[root@peng1 ~]# mkdir /usr/local/java
 [root@peng1 ~]# mv jdk-8u73-linux-i586.gz /usr/local/java
 [root@peng1 ~]# cd /usr/local/java
 [root@peng1 java]# tar -zxvf jdk-8u73-linux-i586.gz
@@ -99,9 +114,9 @@ export CLASSPATH=./:$JAVA_HOME/lib:$JAVA_HOME/jre/lib
 [root@peng1 java]# source /etc/profile
 
 复制 JDK 环境
-[root@peng1 ~]# scp -r /usr/local/java root@peng2:/usr/local/
-[root@peng1 ~]# scp -r /usr/local/java root@peng3:/usr/local/
-[root@peng1 ~]# scp -r /usr/local/java root@peng4:/usr/local/
+[root@peng1 ~]# scp -r /usr/local/java/ root@peng2:/usr/local/
+[root@peng1 ~]# scp -r /usr/local/java/ root@peng3:/usr/local/
+[root@peng1 ~]# scp -r /usr/local/java/ root@peng4:/usr/local/
 [root@peng1 ~]# scp -r /etc/profile root@peng2:/etc/
 [root@peng1 ~]# scp -r /etc/profile root@peng3:/etc/
 [root@peng1 ~]# scp -r /etc/profile root@peng4:/etc/
@@ -128,7 +143,9 @@ crontab: installing new crontab
 登录 peng2 peng3 peng4 同上操作
 
 
-安装 hadoop2
+
+安装 Hadoop
+=============================================================
 http://hadoop.apache.org --- download
 --- http://hadoop.apache.org/releases.html
 --- http://www.apache.org/dyn/closer.cgi/hadoop/common
@@ -275,7 +292,15 @@ export PATH=$PATH:$HADOOP_HOME/sbin
 [root@peng1 ~]# cd /home/hadoop
 [root@peng1 hadoop]# ./bin/hdfs namenode -format
 [root@peng1 hadoop]# ./sbin/start-dfs.sh
+peng1 NameNode SecondaryNameNode
+peng2 DataNode
+peng3 DataNode
+peng4 DataNode
 [root@peng1 hadoop]# ./sbin/start-yarn.sh
+peng1 ResourceManager
+peng2 NodeManager
+peng3 NodeManager
+peng4 NodeManager
 [root@peng1 hadoop]# jps 
 [root@peng1 hadoop]# ./sbin/stop-all.sh
 [root@peng1 hadoop]# ./sbin/start-all.sh 
@@ -416,9 +441,81 @@ Job Finished in 492.184 seconds
 Estimated value of Pi is 3.14800000000000000000
 
 
-hive 环境搭建
-hive 官网 hive.apache.org
 
+安装 zookeeper (只需要 peng1 peng2 peng3 安装)
+=============================================================
+zookeeper.apache.org 
+--- download (http://zookeeper.apache.org/releases.html)
+--- download (http://www.apache.org/dyn/closer.cgi/zookeeper/)
+--- http://apache.fayea.com/zookeeper/
+--- zookeeper-3.4.6
+--- http://apache.fayea.com/zookeeper/zookeeper-3.4.6/zookeeper-3.4.6.tar.gz
+wget http://apache.fayea.com/zookeeper/zookeeper-3.4.6/zookeeper-3.4.6.tar.gz
+
+[root@peng1 ~]# mkdir zk
+[root@peng1 ~]# cd zk
+使用 ssh 工具上传 zookeeper-3.4.6.tar.gz 到 /root/zk
+[root@peng1 zk]# tar -zxvf zookeeper-3.4.6.tar.gz
+[root@peng1 zk]# ln -sf /root/zk/zookeeper-3.4.6 /home/zk
+[root@peng1 zk]# cd /home/zk
+
+
+[root@peng1 zk]# cd conf
+[root@peng1 conf]# cp -a zoo_sample.cfg zoo.cfg
+[root@peng1 conf]# vi zoo.cfg
+dataDir=/opt/zookeeper
+
+server.1=peng1:2888:3888
+server.2=peng2:2888:3888
+server.3=peng3:2888:3888
+[root@peng1 conf]# mkdir /opt/zookeeper
+[root@peng1 conf]# cd /opt/zookeeper/
+[root@peng1 zookeeper]# vi myid
+1
+
+
+[root@peng1 zookeeper]# scp -r /opt/zookeeper/ root@peng2:/opt/
+myid                                          100%    2     0.0KB/s   00:00
+[root@peng1 zookeeper]# scp -r /opt/zookeeper/ root@peng3:/opt/
+myid                                          100%    2     0.0KB/s   00:00
+[root@peng1 zookeeper]# scp -r /root/zk/zookeeper-3.4.6 root@peng2:/root/zk/
+[root@peng1 zookeeper]# scp -r /root/zk/zookeeper-3.4.6 root@peng3:/root/zk/
+
+[root@peng1 zookeeper]# vi /etc/profile
+export PATH=$PATH:/home/zk/bin
+[root@peng1 zookeeper]# source /etc/profile
+[root@peng1 zookeeper]# scp -r /etc/profile root@peng2:/etc/
+[root@peng1 zookeeper]# scp -r /etc/profile root@peng3:/etc/
+[root@peng1 zookeeper]# service iptables stop
+
+登录 peng2
+
+[root@peng2 zk]# ln -sf /root/zk/zookeeper-3.4.6/ /home/zk
+[root@peng2 zk]# cd /home/zk/conf
+[root@peng2 conf]# vi zoo.cfg
+[root@peng2 conf]# vi /opt/zookeeper/myid
+2
+[root@peng2 conf]# source /etc/profile
+[root@peng2 conf]# service iptables stop
+
+登录 peng3 操作同上
+
+启动 ZK
+[root@peng1 ~]# cd /home/zk
+[root@peng1 zk]# cd bin
+[root@peng1 bin]#
+[root@peng1 bin]# zkServer.sh start
+JMX enabled by default
+Using config: /home/zk/bin/../conf/zoo.cfg
+Starting zookeeper ... STARTED
+[root@peng1 bin]# jps
+3094 QuorumPeerMain
+3118 Jps
+
+登录 peng2 peng3 操作同上
+
+安装 hive
+=============================================================
 下载  http://hive.apache.org/downloads.html 
 --- Download a release now!
 --- http://apache.fayea.com/hive/ 
@@ -450,6 +547,8 @@ apache-hive-1.0.1-bin.tar.gz
 如果报 jline 相关的错误 (由于旧版本里不存在 jline jar)
 [root@peng1 hive]# cp lib/jline-2.12.jar /home/hadoop/share/hadoop/yarn/lib/
 [root@peng1 hive]# rm /home/hadoop/share/hadoop/yarn/lib/jline-0.9.94.jar
+
+# 不需要重启动 hadoop (下面三行命令忽略)
 [root@peng1 hive]# stop-all.sh
 [root@peng1 hive]# start-all.sh
 [root@peng1 hive]# hadoop dfsadmin -safemode leave #去除安全模式
@@ -505,6 +604,21 @@ mysql> create database hive;
 
 <name>javax.jdo.option.ConnectionPassword</name>
 <value>123456</value>
+
+# 将 System:java.io.tmpdir 修改 /opt/hive/intmp
+<name>hive.querylog.location</name>
+<value>/opt/hive/intmp</value>
+
+<name>hive.server2.logging.operation.log.location</name>
+<value>/opt/hive/intmp/operation_logs</value>
+
+<name>hive.exec.local.scratchdir</name>
+<value>/opt/hive/intmp</value>
+
+<name>hive.downloaded.resources.dir</name>
+<value>/opt/hive/intmp/peng_resources</value>
+
+
 [root@peng1 hive]# mkdir -p /opt/hive/intmp #目录可以随意创建
 [root@peng1 hive]# cd  conf
 [root@peng1 conf]# vi hive-site.xml
@@ -612,7 +726,8 @@ load data local inpath /root/hivesql/data into table t_person
 
 hiv 的其它用法 参考 hive的使用
 
-
+安装 hbase
+=============================================================
 hbase 环境搭建 ( 分布式环境 )
       HM (HMaster) RS (RegionServer)
 peng1              Y
@@ -636,7 +751,7 @@ export JAVA_HOME=/usr/local/java/jdk1.8.0_73
     <name>hbase.rootdir</name>
     <value>hdfs://peng1:9000/hbase</value>
 </property>
-<property>
+<properey>
     <name>hbase.cluster.distributed</name>
     <value>true</value>
 </property>
