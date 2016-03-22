@@ -260,37 +260,3 @@ kmeans 聚类
 使用手机品牌档次 根据档次维表
 使用多少种不同的手机 手机登录情况
 更换手机频率(月份) 按时间段盾手机登录情况
-
-
-
-
-
-代码
-
-show databases;
-use default; # 不使用 use 也是进入默认数据库
-show talbes;
-desc fdm_ord_
-drop table test_imooc;
-create table test_imooc (id bigint, name string);
-insert overwrite table test_imooc slect 100,'helloword' from default;
-select * from test_imooc;
-
-show tables 显示所有表
-show partitions 显示所有分区
-show table extended 显示表的扩展信息
-show table properties 显示所有表的属性
-show indexes 显示所有索引
-show create table 显示创建表的语句
-show databases 显示数据库
-show columns 显示所有列
-show functions 显示所有函数
-
-show granted roles and privileges 显示所有角色与权限
-show locks 显示锁
-show conf 显示配置文件
-show transactions 显示事务
-
-show databases like '*dm*';
-show partitions table_name;
-show partitions table_name parition(name='value');
