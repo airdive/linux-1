@@ -875,3 +875,21 @@ hbase(main):009:0> put 't_person','001','cf1:name','peng3'
 hbase(main):0010:0> flush 't_person'
 hbase(main):0011:0> major_compact 't_person' #将多个文件合并为一个文件
 hbase(main):0012:0> ./bin/hbase hfile -p -f /hbase/data/default/t_student/14ff507dcb6c8045d4d5af1492ac5394/9a83a6dc26cd4de485b6003f0e5807e6 # cf1文件路径 打印数据信息
+
+
+
+安装 sqoop
+=============================================================
+http://apache.fayea.com/sqoop/1.4.6/
+当前使用 1.99.6 版本
+
+[root@peng1 ~]# mkdir sqoop
+[root@peng1 ~]# mv sqoop-1.99.6-bin-hadoop200.tar.gz sqoop
+[root@peng1 ~]# cd sqoop
+[root@peng1 sqoop]# tar -zxvf sqoop-1.99.6-bin-hadoop200.tar.gz
+
+
+tar -zxvf  sqoop-...
+
+export SQOOP_HOME=/home/sqoop
+export PATH=$PATH:$SQOOP_HOME/bin
