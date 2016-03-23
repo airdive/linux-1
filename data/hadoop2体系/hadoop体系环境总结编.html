@@ -883,13 +883,57 @@ hbase(main):0012:0> ./bin/hbase hfile -p -f /hbase/data/default/t_student/14ff50
 http://apache.fayea.com/sqoop/1.4.6/
 当前使用 1.99.6 版本
 
-[root@peng1 ~]# mkdir sqoop
-[root@peng1 ~]# mv sqoop-1.99.6-bin-hadoop200.tar.gz sqoop
-[root@peng1 ~]# cd sqoop
+# 下次安装 Tomcat 再次测试
+[root@peng1 ~]# cd /home/
+[root@peng1 home]# mkdir sqoop
+[root@peng1 home]#
+[root@peng1 home]# cp -a /root/sqoop-1.99.6-bin-hadoop200.tar.gz sqoop/
+[root@peng1 home]# cd sqoop
+
 [root@peng1 sqoop]# tar -zxvf sqoop-1.99.6-bin-hadoop200.tar.gz
 
-
-tar -zxvf  sqoop-...
-
+[root@peng1 sqoop]# ln -sf /root/sqoop/sqoop-1.99.6-bin-hadoop200 /home/sqoop
+[root@peng1 sqoop]# cd /home/sqoop/
+[root@peng1 ~]# vi /etc/profile
 export SQOOP_HOME=/home/sqoop
 export PATH=$PATH:$SQOOP_HOME/bin
+
+[root@peng1 ~]# source /etc/profile
+
+# 修改配置文件 (hadoop 相关 jar 文件目录)
+[root@peng1 sqoop]# cd /home/sqoop/server/conf/
+[root@peng1 conf]# vi catalina.properties
+#common.loader=${catalina.base}/lib,${catalina.base}/lib/*.jar,${catalina.home}/lib,${catalina.home}/lib/*.jar,${catalina.home}/../lib/*.jar,/usr/lib/hadoop/*.jar,/usr/lib/hadoop/lib/*.jar,/usr/lib/hadoop-hdfs/*.jar,/usr/lib/hadoop-hdfs/lib/*.jar,/usr/lib/hadoop-mapreduce/*.jar,/usr/lib/hadoop-mapreduce/lib/*.jar,/usr/lib/hadoop-yarn/*.jar,/usr/lib/hadoop-yarn/lib/*.jar,/usr/lib/hive/lib/*.jar
+#
+
+common.loader=/home/hadoop/share/hadoop/common/*.jar,/home/hadoop/share/hadoop/common/lib/*.jar,/home/hadoop/share/hadoop/hdfs/*.jar,/home/hadoop/share/hadoop/hdfs/lib/*.jar,/home/hadoop/share/hadoop/mapreduce/*.jar,/home/hadoop/share/hadoop/mapreduce/lib/*.jar,/home/hadoop/share/hadoop/yarn/*.jar,/home/hadoop/share/hadoop/yarn/lib/*.jar,/home/hive/lib/*.jar
+
+[root@peng1 conf]# vi sqoop.properties
+/configuration.directory
+org.apache.sqoop.submission.engine.mapreduce.configuration.directory=/home/hadoop/etc/hadoop
+
+复制 msyql-con...jar 到 .../server/lib
+
+# 服务端启动
+[root@peng1 sqoop]# ./bin/sqoop.sh server start # 也可以使用./bin/sqoop2-server start 启动服务
+Sqoop home directory: /home/sqoop
+Setting SQOOP_HTTP_PORT:     12000
+Setting SQOOP_ADMIN_PORT:     12001
+Using   CATALINA_OPTS:
+Adding to CATALINA_OPTS:    -Dsqoop.http.port=12000 -Dsqoop.admin.port=12001
+Using CATALINA_BASE:   /home/sqoop/server
+Using CATALINA_HOME:   /home/sqoop/server
+Using CATALINA_TMPDIR: /home/sqoop/server/temp
+Using JRE_HOME:        /usr/local/java/jdk1.8.0_73/jre
+Using CLASSPATH:       /home/sqoop/server/bin/bootstrap.jar
+
+[root@peng1 sqoop]# ./bin/sqoop.sh client
+Sqoop home directory: /home/sqoop
+三月 23, 2016 9:54:20 上午 java.util.prefs.FileSystemPreferences$1 run
+信息: Created user preferences directory.
+Sqoop Shell: Type 'help' or '\h' for help.
+
+sqoop:000> show version # 查看版本是否安装成功
+client version:
+  Sqoop 1.99.6 source revision 07244c3915975f26f03d9e1edf09ab7d06619bb8
+  Compiled by root on Wed Apr 29 10:40:43 CST 2015
