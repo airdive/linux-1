@@ -906,11 +906,11 @@ export PATH=$PATH:$SQOOP_HOME/bin
 #common.loader=${catalina.base}/lib,${catalina.base}/lib/*.jar,${catalina.home}/lib,${catalina.home}/lib/*.jar,${catalina.home}/../lib/*.jar,/usr/lib/hadoop/*.jar,/usr/lib/hadoop/lib/*.jar,/usr/lib/hadoop-hdfs/*.jar,/usr/lib/hadoop-hdfs/lib/*.jar,/usr/lib/hadoop-mapreduce/*.jar,/usr/lib/hadoop-mapreduce/lib/*.jar,/usr/lib/hadoop-yarn/*.jar,/usr/lib/hadoop-yarn/lib/*.jar,/usr/lib/hive/lib/*.jar
 #
 
-common.loader=/home/hadoop/share/hadoop/common/*.jar,/home/hadoop/share/hadoop/common/lib/*.jar,/home/hadoop/share/hadoop/hdfs/*.jar,/home/hadoop/share/hadoop/hdfs/lib/*.jar,/home/hadoop/share/hadoop/mapreduce/*.jar,/home/hadoop/share/hadoop/mapreduce/lib/*.jar,/home/hadoop/share/hadoop/yarn/*.jar,/home/hadoop/share/hadoop/yarn/lib/*.jar,/home/hive/lib/*.jar
+common.loader=${catalina.base}/lib,${catalina.base}/lib/*.jar,${catalina.home}/lib,${catalina.home}/lib/*.jar,/home/hadoop/share/hadoop/common/*.jar,/home/hadoop/share/hadoop/common/lib/*.jar,/home/hadoop/share/hadoop/hdfs/*.jar,/home/hadoop/share/hadoop/hdfs/lib/*.jar,/home/hadoop/share/hadoop/mapreduce/*.jar,/home/hadoop/share/hadoop/mapreduce/lib/*.jar,/home/hadoop/share/hadoop/yarn/*.jar,/home/hadoop/share/hadoop/yarn/lib/*.jar,/home/hive/lib/*.jar
 
 [root@peng1 conf]# vi sqoop.properties
 /configuration.directory
-org.apache.sqoop.submission.engine.mapreduce.configuration.directory=/home/hadoop/etc/hadoop
+org.apache.sqoop.submission.engine.mapreduce.configuration.directory=/home/hadoop/etc/hadoop/
 
 复制 msyql-con...jar 到 .../server/lib
 
@@ -933,7 +933,207 @@ Sqoop home directory: /home/sqoop
 信息: Created user preferences directory.
 Sqoop Shell: Type 'help' or '\h' for help.
 
-sqoop:000> show version # 查看版本是否安装成功
+sqoop:000> show version --all # 查看版本是否安装成功
 client version:
   Sqoop 1.99.6 source revision 07244c3915975f26f03d9e1edf09ab7d06619bb8
   Compiled by root on Wed Apr 29 10:40:43 CST 2015
+0    [main] WARN  org.apache.hadoop.util.NativeCodeLoader  - Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+server version:
+  Sqoop 1.99.6 source revision 07244c3915975f26f03d9e1edf09ab7d06619bb8
+  Compiled by root on Wed Apr 29 10:40:43 CST 2015
+API versions:
+  [v1]
+
+sqoop:000> show connector
++----+------------------------+---------+------------------------------------------------------+----------------------+
+| Id |          Name          | Version |                        Class                         | Supported Directions |
++----+------------------------+---------+------------------------------------------------------+----------------------+
+| 1  | generic-jdbc-connector | 1.99.6  | org.apache.sqoop.connector.jdbc.GenericJdbcConnector | FROM/TO              |
+| 2  | kite-connector         | 1.99.6  | org.apache.sqoop.connector.kite.KiteConnector        | FROM/TO              |
+| 3  | hdfs-connector         | 1.99.6  | org.apache.sqoop.connector.hdfs.HdfsConnector        | FROM/TO              |
+| 4  | kafka-connector        | 1.99.6  | org.apache.sqoop.connector.kafka.KafkaConnector      | TO                   |
+
+sqoop:000> create link --cid 1
+Creating link for connector with id 1
+Please fill following values to create new link object
+Name: firstLink # 连接名 (随便取)
+
+Link configuration
+
+JDBC Driver Class: com.mysql.jdbc.Driver # mysql jdbc 驱动类名
+JDBC Connection String: jdbc:mysql://peng1/peng # 建立连接 (连接那个库)
+Username: root # 用户名
+Password: ****** # 密码
+JDBC Connection Properties:
+There are currently 0 values in the map:
+entry#
+New link was successfully created with validation status OK and persistent id 1
+sqoop:000> show link
++----+-----------+--------------+------------------------+---------+
+| Id |   Name    | Connector Id |     Connector Name     | Enabled |
++----+-----------+--------------+------------------------+---------+
+| 1  | firstLink | 1            | generic-jdbc-connector | true    |
++----+-----------+--------------+------------------------+---------+
+sqoop:000> create link --cid 3
+Creating link for connector with id 3
+Please fill following values to create new link object
+Name: second
+
+Link configuration
+
+HDFS URI: hdfs://peng1:8020/
+Hadoop conf directory: /home/hadoop/etc/hadoop/
+New link was successfully created with validation status OK and persistent id 2
+sqoop:000> show link
++----+-----------+--------------+------------------------+---------+
+| Id |   Name    | Connector Id |     Connector Name     | Enabled |
++----+-----------+--------------+------------------------+---------+
+| 1  | firstLink | 1            | generic-jdbc-connector | true    |
+| 2  | second    | 3            | hdfs-connector         | true    |
++----+-----------+--------------+------------------------+---------+
+
+mysql 导数据到 hdfs
+
+
+安装 scala
+=============================================================
+www.scala-lang.org/download # 下载 scala-2.11.8.tgz
+
+[root@peng1 ~]# mkdir scala
+[root@peng1 ~]# mv scala-2.11.8.tgz scala
+[root@peng1 ~]# cd scala/
+[root@peng1 scala]# ls
+[root@peng1 scala]# tar -zxvf scala-2.11.8.tgz
+[root@peng1 ~]# ln -sf /root/scala/scala-2.11.8 /home/scala
+[root@peng1 ~]# cd /home/scala/
+[root@peng1 scala]# ./bin/scala
+Welcome to Scala 2.11.8 (Java HotSpot(TM) Client VM, Java 1.8.0_73).
+Type in expressions for evaluation. Or try :help.
+
+scala>
+
+[root@peng1 scala]# vi /etc/profile
+export SCALA_HOME=/home/scala
+export PATH=$PATH:/home/scala/bin
+[root@peng1 scala]# source /etc/profile
+
+[root@peng1 scala]# scp /etc/profile root@peng2:/etc/
+[root@peng1 scala]# scp /etc/profile root@peng3:/etc/
+[root@peng1 scala]# scp /etc/profile root@peng4:/etc/
+[root@peng1 scala]# scp -r /root/scala/scala-2.11.8 root@peng2:/root/scala/
+[root@peng1 scala]# scp -r /root/scala/scala-2.11.8 root@peng3:/root/scala/
+[root@peng1 scala]# scp -r /root/scala/scala-2.11.8 root@peng4:/root/scala/
+
+登录 peng2
+[root@peng2 ~]# ln -sf /root/scala/scala-2.11.8 /home/scala/
+[root@peng2 ~]# source /etc/profile
+
+登录 peng3 peng4 操作同上
+
+
+安装 spark
+=============================================================
+spark 下载
+http://spark.apache.org/downloads.html
+
+下载页需要选择spark 版本 还要选择 hadoop 版本
+http://www.apache.org/dyn/closer.lua/spark/spark-1.6.0/spark-1.6.0-bin-hadoop2.6.tgz
+
+[root@peng1 ~]# mkdir spark
+[root@peng1 ~]# mv spark-1.6.0-bin-hadoop2.6.tgz spark
+[root@peng1 ~]# cd spark/
+[root@peng1 spark]# ls
+spark-1.6.0.tgz
+[root@peng1 spark]# tar -zxvf spark-1.6.0-bin-hadoop2.6.tgz
+
+[root@peng1 spark]# ln -sf /root/spark/spark-1.6.0-bin-hadoop2.6.tgz /home/spark
+[root@peng1 spark]# cd /home/spark/conf/
+
+[root@peng1 conf]# cp -a spark-env.sh.template spark-env.sh
+[root@peng1 conf]# vi spark-env.sh
+
+export JAVA_HOME=/usr/local/java/jdk1.8.0_73
+export SCALA_HOME=/home/scala
+export SPARK_MASTER_IP=peng1
+export SPARK_WORKER_MEMORY=1g
+export SPARK_EXECUTOR_MEMORY=1g
+export SPARK_DRIVER_MEMORY=1G
+export HADOOP_CONF_DIR=/home/hadoop/etc/hadoop
+
+[root@peng1 conf]# cp -a slaves.template slaves
+[root@peng1 conf]# vi slaves
+peng2
+peng3
+peng4
+
+[root@peng1 conf]# cp -a spark-defaults.conf.template spark-defaults.conf
+[root@peng1 conf]# vi spark-defaults.conf
+spark.executor.extraJavaOptions  -XX:+PrintGCDetails -Dkey=value -Dnumbers="one two three"
+spark.eventLog.enabled           true
+spark.eventLog.dir               hdfs://peng1:9000/historyserverforSpark
+spark.yarn.historyServer.address peng1:18080
+spark.history.fs.logDirectory    hdfs://peng1:9000/historyserverforSpark
+
+
+[root@peng1 spark]# vi /etc/profile
+export SCALA_HOME=/home/scala
+export PATH=$PATH:$SCALA_HOME/bin
+
+export SPARK_HOME=/home/spark
+export PATH=$PATH:$SPARK_HOME/bin
+export PATH=$PATH:$SPARK_HOME/sbin
+
+
+[root@peng1 spark]# scp /etc/profile root@peng2:/etc/
+profile                                       100% 2282     2.2KB/s   00:00
+[root@peng1 spark]# scp /etc/profile root@peng3:/etc/
+profile                                       100% 2282     2.2KB/s   00:00
+[root@peng1 spark]# scp /etc/profile root@peng4:/etc/
+profile                                       100% 2282     2.2KB/s   00:00
+
+[root@peng1 spark]# scp -r /root/spark/spark-1.6.0-bin-hadoop2.6 root@peng2:/root/spark/  
+[root@peng1 spark]# scp -r /root/spark/spark-1.6.0-bin-hadoop2.6 root@peng3:/root/spark/  
+[root@peng1 spark]# scp -r /root/spark/spark-1.6.0-bin-hadoop2.6 root@peng4:/root/spark/  
+
+登录 peng2 修改软链接
+[root@peng2 spark]# ln -sf /root/spark/spark-1.6.0-bin-hadoop2.6.tgz/ /home/spark
+[root@peng2 ~]# source /etc/profile
+
+登录 peng3 peng4 同上操作
+
+[root@peng1 spark]# jps
+27008 QuorumPeerMain
+26533 ResourceManager
+15270 MainGenericRunner
+26220 NameNode
+26397 SecondaryNameNode
+17038 Master
+17102 Jps
+
+[root@peng2 scala]# jps
+25728 QuorumPeerMain
+26352 Jps
+26305 Worker
+25378 DataNode
+25475 NodeManager
+
+[root@peng3 scala]# jps
+26626 Jps
+26563 Worker
+3492 QuorumPeerMain
+2573 DataNode
+2670 NodeManager
+
+[root@peng4 scala]# jps
+2839 DataNode
+2936 NodeManager
+29352 Jps
+29289 Worker
+
+[root@peng1 spark]# ./sbin/start-all.sh
+http://peng1:8080/
+
+[root@peng1 spark]# ./sbin/start-history-server.sh
+http://peng1:18080
+
+[root@peng1 spark]# ./bin/run-example SparkPi 10 # 测试案例

@@ -153,11 +153,43 @@ profile                                       100% 2282     2.2KB/s   00:00
 [root@peng1 spark]# scp /etc/profile root@peng4:/etc/
 profile                                       100% 2282     2.2KB/s   00:00
 
-[root@peng1 spark]# scp -r /root/spark/spark-1.6.0 root@peng2:/root/spark/
-[root@peng1 spark]# scp -r /root/spark/spark-1.6.0 root@peng3:/root/spark/
-[root@peng1 spark]# scp -r /root/spark/spark-1.6.0 root@peng4:/root/spark/
+[root@peng1 spark]# scp -r /root/spark/spark-1.6.0-bin-hadoop2.6 root@peng2:/root/spark/  
+[root@peng1 spark]# scp -r /root/spark/spark-1.6.0-bin-hadoop2.6 root@peng3:/root/spark/  
+[root@peng1 spark]# scp -r /root/spark/spark-1.6.0-bin-hadoop2.6 root@peng4:/root/spark/  
+[root@peng1 spark]# scp -r /root/scala/scala-2.11.8 root@peng2:/root/scala/
+[root@peng1 spark]# scp -r /root/scala/scala-2.11.8 root@peng3:/root/scala/
+[root@peng1 spark]# scp -r /root/scala/scala-2.11.8 root@peng4:/root/scala/
 
 [root@peng2 spark]# ln -sf /root/spark/spark-1.6.0/ /home/spark
+
+[root@peng1 spark]# jps
+27008 QuorumPeerMain
+26533 ResourceManager
+15270 MainGenericRunner
+26220 NameNode
+26397 SecondaryNameNode
+17038 Master
+17102 Jps
+
+[root@peng2 scala]# jps
+25728 QuorumPeerMain
+26352 Jps
+26305 Worker
+25378 DataNode
+25475 NodeManager
+
+[root@peng3 scala]# jps
+26626 Jps
+26563 Worker
+3492 QuorumPeerMain
+2573 DataNode
+2670 NodeManager
+
+[root@peng4 scala]# jps
+2839 DataNode
+2936 NodeManager
+29352 Jps
+29289 Worker
 
 [root@peng1 spark]# ./sbin/start-all.sh
 http://peng1:8080/
