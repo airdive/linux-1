@@ -514,13 +514,15 @@ Starting zookeeper ... STARTED
 
 登录 peng2 peng3 操作同上
 
+
+
 安装 hive
 =============================================================
 下载  http://hive.apache.org/downloads.html 
 --- Download a release now!
 --- http://apache.fayea.com/hive/ 
---- hive-1.0.1/
---- apache-hive-1.0.1-bin.tar.gz
+--- hive-1.2.1/
+--- apache-hive-1.2.1-bin.tar.gz
 
 service iptables stop #关闭防火墙
 # 启动 hadoop 集群
@@ -538,8 +540,8 @@ peng1:50070
 [root@peng1 ~]# cd hive
 [root@peng1 hive]# ls
 apache-hive-1.0.1-bin.tar.gz
-[root@peng1 hive]# tar -zxvf apache-hive-1.1.1-bin.tar.gz
-[root@peng1 hive]# ln -sf /root/hive/apache-hive-1.1.1-bin /home/hive
+[root@peng1 hive]# tar -zxvf apache-hive-1.2.1-bin.tar.gz
+[root@peng1 hive]# ln -sf /root/hive/apache-hive-1.2.1-bin /home/hive
 [root@peng1 hive]# cd /home/hive
 
 # 进入 hive 客户端
@@ -724,7 +726,9 @@ MAP KEYS TERMINATED BY ':';
 
 load data local inpath /root/hivesql/data into table t_person
 
-hiv 的其它用法 参考 hive的使用
+hive 的其它用法 参考 hive的使用
+
+
 
 安装 hbase
 =============================================================
@@ -995,6 +999,7 @@ sqoop:000> show link
 mysql 导数据到 hdfs
 
 
+
 安装 scala
 =============================================================
 www.scala-lang.org/download # 下载 scala-2.11.8.tgz
@@ -1029,6 +1034,7 @@ export PATH=$PATH:/home/scala/bin
 [root@peng2 ~]# source /etc/profile
 
 登录 peng3 peng4 操作同上
+
 
 
 安装 spark
