@@ -168,3 +168,126 @@ SPARK_WORKER_PORT=            // worker 端口
 SPARK_WORDER_WEBUI_PORT=      // worker 访问端口
 
 
+export MASTER=spark://peng1:7077
+spark-shell
+sc.master
+sc.appName
+sc.version
+
+spark cluster: master(1) + worker(n)
+application(1) --- work(1)
+
+加载 File
+val file = sc.textFile();
+该命令将每行文本作为 RDD 元素
+连接到 spark master 后 如果集群不是分布式文件系统 spark 会在每个 node 上加载数据
+通常选择从 hdfs 上加载数据
+local 模式下 文件从本地加载
+
+app(1) --- (n)job
+job(1) --- (n) task
+每一个 action 的执行都对应一个 job 典型的是 first count
+
+备份文件
+该命令在所在机器上都进行文件备份
+val file = sc.addFile("");
+
+map 按照空格拆分行 将元素转换成 double 值
+file.map(_.split(" ")).map(_.toDouble)
+
+spark 编译
+scala   : sbt(simple build tool 编译)
+          maven
+java    : maven
+eclipse : maven
+
+使用 maven 编译 spark 应用 (java)
+创建目录存放项目 mkdir myspark
+通过 mvn 的初始化命令进行项目初始化工作(创建相应的目录和配置文件) mvn 初始化目录结构 mvn archetype:generate
+
+-DarchetypeGroupId=org.apache.maven.archetypes
+-DgroupId=com.peng # 公司名
+-DartifactId=Java # 项目名
+-Dfilter=org.apache.maven.archetypes.maven-archetype-quickstart
+
+使用 maven build
+准备 java 源文件
+find . | grep Java.java | cp 'xargs' /dist/
+
+修改 pom.xml 文件  准备编译并打包 添加 spark 依赖项目
+pom.xml 配置 org.apache.spark 而且版本也需要和自己的 maven 仓库服务器中的工件 id 和版本号分别对应上
+
+修改 pom.xml 文件 添加依赖项和插件
+
+使用 maven build
+编译并打包
+通过 pom.xml 文件配置寻找仓库中对应的项目和类库
+cd ${pom.xml} 所在目录
+mvn package
+成功后生成如下目录结构
+find .
+
+使用 java 命令运行程序
+java -cp project.jar:spark-assembly-1.5.2-hadoop2.6.2.jar com.peng.JavaWordCount /root/input/wc
+
+使用 mvn 命令运行程序
+在 pom.xml 中加入 exec 插件  使用以下命令执行程序
+mvn exec:java -Dexec.mainClass="com.peng.JavaWordCount" -Dexec.args="/root/input/wc"
+
+
+eclipse
+配置 eclipse 的 maven 仓库使用本地 maven 仓库服务器
+windows ---- preferences ---- maven ---- settings
+${M2_HOME}/conf/settings.xml
+
+使用 maven 在 eclipse 中项目开发
+创建 maven 项目  考查项目结构
+创建 Java 类
+配置 pom.xml 添加依赖项
+
+eclipse 下进行 scala 程序
+下载 scala 插件
+eclipse ----> markerplace ----> scala ----> install
+首选项 ----> scala
+
+scala 执行过程
+scalac 编译
+*.scala ----> *.class ---->
+
+创建文件夹 myscala
+创建目录
+编译 scala 源文件
+-d 指定 class 文件存放目录
+-classpath 指定类路径
+源代码文件
+scalac -d target/classes -classpath target/classes:/spark.../spark-assembly-1.5.2-hadoop2.6.2.jar src/main.../MyScala.scala
+生成对应的 class 文件
+运行 class 文件
+java -classpath
+scala -classpath
+运行
+
+maven 编译 scala 程序
+创建项目
+编写 scala 文件
+配置 pom.xml 文件  添加一个 scala maven 插件  编译插件
+<build>
+    <sourceDirectory>src/main/java</sourceDirectory>
+    <testSourceDirectory>src/test/java</testSourceDirectory>
+    <plugins>
+    	<plugin>
+    		<groupId>net.alchim31.maven</groupId>
+    		<artifactId>scala-maven-plugin</artifactId>
+    		<version>3.2.1</version>
+    	</plugin>
+    </plugins>
+</build>
+
+
+使用 eclipse 开发 scala 程序
+创建 maven 项目
+导入依赖包 例如 spark
+添加 scala 特性
+添加 scala 特性会引入 scala 类库 默认是最高版本 2.11.x  但是报错 因为 spark 支持的是 2.10.x 版本 需要修改构建路径的 scala 编译器到 2.10.3
+编写 scala 文件
+运行 scala 应用
