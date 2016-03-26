@@ -1,0 +1,88 @@
+spark 介绍
+
+spark 是类 Hadoop MapReduce 的通用并行框架
+中间输出结果可以保存在内存中
+适用于数据挖掘与机器学习等需要迭代的 MapReduce 的算法
+启用了内存分布数据集 优代迭代工作负载
+spark 是在 scala 语言中实现的
+spark 和 scala 能够紧密集成 像操作本地集合对象一样操作分布式数据集
+对 hadoop 的补充 可以在 hadoop 文件系统中并行运行
+
+spark 目标
+目标是使用分布式数据上使用 "变换" 轻松操纵大规模数据
+传统分布式计算平台扩展性好但受限于 API(MR)
+spark 突破的单机的限制
+有快速 Data API 编写大规模数据处理程序很轻松
+
+spark scala python
+spark 最初由 scala 编写 支持简洁语法和交互式使用
+添加 Java API 是为了支持独立的应用程序
+python 的添加是为了交互式 shell
+
+spark 安装
+安装 tar -zxvf spark...
+配置
+export SPARK_HOME=
+export PATH
+
+运行 (本地模式)
+spark-shell --master local(n) # n 线程数
+
+下载
+预编译版本
+源码编译版本
+wget --help # wget 命令帮助
+
+安装
+tar
+建立软链接
+配置环境变量 profile envirement
+spark-shell local(n) n --- 计算机几核这里就常常写几核
+
+spark 体验
+使用 shell
+shell 时间简单的数据分析工具 是学习 API 的快捷手段 可以使用 scala 语言
+${spark_home}/bin/spark-shell
+
+新建 RDD 对象
+val file = sc.textFile("")
+
+hadoop  --- maxtemp wordcount
+spark-shell --- sc(SparkContext)
+
+file = sc.textFile
+file.count
+flie.first
+file.filter(_.contains("spark"))
+file.filter(_.contains("hadoop")) # 过滤包含此单词的行数
+
+使用 shell 
+每行按空格分割成数组 取出大小
+形成新的 rdd 集合 然后再所有行上进行对比 找出最大行
+reduce 是纵向所有行比较
+file.map(_.split(" ").size).filter((a,b) => if (a > b) a else b)
+....filter(Math.max(_, _))
+
+Spark RDD
+Resilient Distibuted Dataset
+弹性分布式数据集 spark 的核心抽象 只读的对象集合 按照集群主机进行分区 多个 RDD 作为 input 进行加载并进行一些列变换转变成新的 RDD 弹性 是指 spark 可以根据计算的来源方式 通过重新计算后进行的自动重构丢失的分区
+
+加载数据或执行变换并不会触发数据的处理 只是生成执行计划 直到 action 动作执行时 才进行数据处理 比如 foreach
+sc.text
+
+spark 变换
+val res = lines.map(_.split("\t"))
+val filtered = res.filter(rec => (rec(1) != "9999") && rec(2).matches("[01459]"))
+val tuples = filtered.map(rec => (rec(0).toInt,rec(1),toInt)) 
+
+安装 maven
+下载 maven
+解压 tar
+配置环境变量 PATH M2_HOME
+验证 maven 是否成功能 mvn -v
+
+通过源码编译安装 spark
+下载源代码
+解压 tgz 文件
+使用 maven 编译源码 (需先安装 maven)
+mvn -Dhadoop.version= -Phadoop-2.6 -DskipTests clean package
