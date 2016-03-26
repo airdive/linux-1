@@ -137,3 +137,34 @@ spark 官方 doc
 
 spark 独立集群模式部署
 peng1:8080/jobs
+
+spark 独立集群模式部署
+spark-shell ---- spark submit ---- 4040 webui
+local 本地模式 不是集群
+独立集群模式 standalone clustor mode
+配置 conf/slaves
+同步 conf 文件到所有集群节点
+在 master 节点上启动 start-master.sh
+分别到 slaves 节点启动 start-slaves.sh
+
+独立部署实质上就是手动通过脚本 -- 启动所需要的进程 例如 master 进程  work 进程等等
+在 spark/sbin 目录下    提供了相应的脚本
+start-master.sh // 启动 master 进程
+start-slave.sh  // 启动单个 work 进程
+start-slaves.sh // 启动所有 work 进程
+start-all.sh    // 启动所有进程 在 master 上执行
+stop-xxx.sh     // 对应的停止进程
+
+./sbin/start-slave.sh spark://peng1:7077 (可以在 web 页查到具到端口)
+
+spark 集群默认调度 job 的机制
+FIFO :  fist in first out 队列模式
+
+spark 的端口等参数配置
+spark-env.sh
+SPARK_MASTER_PORT=7077  // spark 对内端口
+SPARK_MASTER_WEBUI_PORT=8080 // web 访问端口
+SPARK_WORKER_PORT=            // worker 端口
+SPARK_WORDER_WEBUI_PORT=      // worker 访问端口
+
+
