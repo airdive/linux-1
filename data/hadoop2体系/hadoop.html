@@ -224,3 +224,57 @@ MRAppMaster 进一步将资源分配给内部的任务
 MRAppMaster 容错
 失败后 由 YARN 重新启动
 任务失败后 MRAppMaster 重新申请资源
+
+========================================================
+
+HDFS 写入文件的流程
+第一步 client 写入请求 namenode
+第二步 namenode 返回元数据给 client
+第三步 写入 block
+第四步 block 之间进行复制
+第五步 datanode 更新元数据至 namenode
+
+HDFS 读取文件的流程
+第一步 client 读取请求 namenode
+第二步 namenode 返回元数据给 client
+第三步 读取 block 中数据
+
+HDFS 读取数据  client 向 NameNode 发起读取数据的请求  
+NameNode 会检索 Client 读取数据的元数据信息来决定第一个 Block 具体在哪些机器上并根据 Hadoop 的机架感知策略等决定把哪个副本交给 Client 去读取  
+其实 NameNode 是返回了该副本的 URL  接下来就是 Client 通过该 URL 建立 InputStream 进行数据的读取  
+后续 Block 按照同样的流程 以此类推
+
+HDFS 写入数据  client 向 NameNode 发起写数据的请求
+NameNode 会决定把第一个 Block 及其副本写在哪些机器 (一般而言如果有三个副本 那么两个副本在同一个 Rack 另外一个副本在另一个机架中的) 但是实际上写入数据的时候  
+客户端只写入每个 Block 的第一个副本给 HDFS
+Client 写入每个 Block 的第一个副本后  该 Block 的副本是在 NameNode 的管理下基于第一个副本的数据进行 Pipeline 方式的写入
+
+
+基于 Yarn 的 MapReduce 架构
+MapReduce 程序是基于 Mapper 和 Reducer 两大阶段构成的 其中 Mapper 是把一个计算任务分成很多小任务进行并行计算 Reducer 是做最后的统计工作的
+Hadoop 2.x 开始 MapReduce 的运行是基于 Yarn 进行的
+
+当 ResourceManager 接收到 Client 提交程序的请求的时候会根据集群资源的状况在某个 NodeManager 所在的节点上命令 NodeManager 来启动程序的第一个 Container   该 Container 就是程序的 ApplicatioinMaster  负责程序的任务调度的执行过程  ApplicationMaster 转过来向 ResourceManager 注册自己  注册之的会向 ResourceManager 申请具体的 Container 计算资源
+
+如何知道一个程序中的 ApplicationMaster 需要多少个 Container 呢
+ApplicationMaster 在启动的时候会运行程序的 main 方法
+该方法中会有数据的输入和相关的配置
+通过这些内容就可以知道需要多少 Container
+
+主从结构
+主节点 只有一个 ResourceManager
+控制节点 每个 Job 都有一个 MRAppMaster
+从节点 有很多个 YarnChild
+
+ResourceManager 负责
+接收客户提交的计算任务
+把 Job 分给 MRAppMaster 执行
+监控 MRAppMaster 的执行情况
+
+MRAppMaster 负责
+负责一个 Job 执行的任务调度
+把 Job 分给 YarnChild 执行
+监控 YarnChild 的执行情况
+
+YarnChild 负责
+执行 MRAppMaster 分配的计算任务
