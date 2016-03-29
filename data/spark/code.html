@@ -19,3 +19,36 @@ scala> rdd.first
 res3: String = welcome hadoop welcome hello
 scala> rdd.count
 res4: Long = 6
+
+# print 打印  println 打印并换行
+scala> print("Answer : ")
+Answer :
+scala> println(42)
+42
+
+scala> println("Answer : " + 42)
+Answer : 42
+
+# eclipse 上测试输入内容
+object ReadLine {
+  def main(args: Array[String]): Unit = {
+    val name = readLine("请输入你的名字 : ")
+    print("请输入你的年龄 : ")
+    val age = readInt()
+    printf("Hello, %s! 下一年, 你是 %d 岁\n", name, age + 1)
+  }
+}
+
+def main(args: Array[String]): Unit = {
+    this.whileTest();
+  }
+  
+  def whileTest() { // 测试 while 循环
+    var n = 10
+    var r = 1
+    while ( n > 0 ) {
+      r = r * n
+      n = n - 1
+      println(s"r 的值是 : ${r} \t\t n 的值是 : ${n}")
+    }
+  }
